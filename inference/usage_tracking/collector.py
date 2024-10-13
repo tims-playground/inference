@@ -317,16 +317,16 @@ class UsageCollector:
                 source_usage["timestamp_start"] = time.time_ns()
             source_usage["timestamp_stop"] = time.time_ns()
             source_usage["processed_frames"] += frames if not inference_test_run else 0
-            source_usage["fps"] = round(fps, 2)
+            source_usage["fps"] = round(fps, 2) if fps is not None else None
             source_usage["source_duration"] += (
                 frames / fps if fps and not inference_test_run else 0
             )
-            source_usage["category"] = category
-            source_usage["resource_id"] = resource_id
-            source_usage["resource_details"] = json.dumps(resource_details)
-            source_usage["api_key_hash"] = api_key_hash
-            source_usage["ip_address_hash"] = ip_address_hash
-            source_usage["is_gpu_available"] = is_gpu_available
+            source_usage["category"] = category if category is not None else None
+            source_usage["resource_id"] = resource_id if resource_id is not None else None
+            source_usage["resource_details"] = json.dumps(resource_details) if resource_details is not None else None
+            source_usage["api_key_hash"] = api_key_hash if api_key_hash is not None else None
+            source_usage["ip_address_hash"] = ip_address_hash if ip_address_hash is not None else None
+            source_usage["is_gpu_available"] = is_gpu_available if is_gpu_available is not None else None
             logger.debug("Updated usage: %s", source_usage)
 
     def record_usage(
