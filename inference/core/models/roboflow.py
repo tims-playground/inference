@@ -592,6 +592,9 @@ class OnnxRoboflowInferenceModel(RoboflowInferenceModel):
         super().__init__(model_id, *args, **kwargs)
         if self.load_weights or not self.has_model_metadata:
             self.onnxruntime_execution_providers = onnxruntime_execution_providers
+            logger.debug(
+                f"Onnxruntime execution providers!!!: {self.onnxruntime_execution_providers}"
+            )
             expanded_execution_providers = []
             for ep in self.onnxruntime_execution_providers:
                 if ep == "TensorrtExecutionProvider":
@@ -700,8 +703,11 @@ class OnnxRoboflowInferenceModel(RoboflowInferenceModel):
             # Create an ONNX Runtime Session with a list of execution providers in priority order. ORT attempts to load providers until one is successful. This keeps the code across devices identical.
             providers = self.onnxruntime_execution_providers
 
+            logger.debug(f"Providers: {providers}")
+
             if not self.load_weights:
                 providers = ["OpenVINOExecutionProvider", "CPUExecutionProvider"]
+                logger.debug(f"Load weights is False, using default providers: {providers}")
             try:
                 session_options = onnxruntime.SessionOptions()
                 # TensorRT does better graph optimization for its EP than onnx
@@ -709,6 +715,7 @@ class OnnxRoboflowInferenceModel(RoboflowInferenceModel):
                     session_options.graph_optimization_level = (
                         onnxruntime.GraphOptimizationLevel.ORT_DISABLE_ALL
                     )
+                providers = ["CUDAExecutionProvider"]
                 self.onnx_session = onnxruntime.InferenceSession(
                     self.cache_file(self.weights_file),
                     providers=providers,
