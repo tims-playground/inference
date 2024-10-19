@@ -675,8 +675,6 @@ class OnnxRoboflowInferenceModel(RoboflowInferenceModel):
         logger.debug(f"Running test inference. Image size: {test_image.shape}")
         result = self.infer(test_image, usage_inference_test_run=True)
         logger.debug(f"Test inference finished.")
-        prof_file = self.onnx_session.end_profiling()
-        logger.debug(f"Profiling file: {prof_file}")
         return result
 
     def get_model_output_shape(self) -> Tuple[int, int, int]:

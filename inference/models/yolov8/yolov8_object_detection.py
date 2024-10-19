@@ -48,6 +48,8 @@ class YOLOv8ObjectDetection(ObjectDetectionBaseOnnxRoboflowInferenceModel):
             logger.debug("CUDA is being used for inference.")
         else:
             logger.debug("CUDA is not being used. The session has fallen back to another provider.")
+        prof_file = self.onnx_session.end_profiling()
+        logger.debug(f"Profiling file: {prof_file}")
         predictions = predictions.transpose(0, 2, 1)
         boxes = predictions[:, :, :4]
         class_confs = predictions[:, :, 4:]
