@@ -675,6 +675,8 @@ class OnnxRoboflowInferenceModel(RoboflowInferenceModel):
         logger.debug(f"Running test inference. Image size: {test_image.shape}")
         result = self.infer(test_image, usage_inference_test_run=True)
         logger.debug(f"Test inference finished.")
+        prof_file = self.onnx_session.end_profiling()
+        logger.debug(f"Profiling file: {prof_file}")
         return result
 
     def get_model_output_shape(self) -> Tuple[int, int, int]:
@@ -713,6 +715,7 @@ class OnnxRoboflowInferenceModel(RoboflowInferenceModel):
                 logger.debug(f"Load weights is False, using default providers: {providers}")
             try:
                 session_options = onnxruntime.SessionOptions()
+                session_options.enable_profiling = True
                 # TensorRT does better graph optimization for its EP than onnx
                 if has_trt(providers):
                     session_options.graph_optimization_level = (
