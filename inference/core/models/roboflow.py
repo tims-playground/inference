@@ -713,7 +713,7 @@ class OnnxRoboflowInferenceModel(RoboflowInferenceModel):
                 logger.debug(f"Load weights is False, using default providers: {providers}")
             try:
                 session_options = onnxruntime.SessionOptions()
-                session_options.enable_profiling = True
+                # session_options.enable_profiling = True
                 # TensorRT does better graph optimization for its EP than onnx
                 if has_trt(providers):
                     session_options.graph_optimization_level = (
