@@ -1,6 +1,8 @@
 from typing import Tuple
 
 import numpy as np
+from inference.core.logger import logger
+import onnxruntime
 
 from inference.core.models.object_detection_base import (
     ObjectDetectionBaseOnnxRoboflowInferenceModel,
@@ -38,7 +40,13 @@ class YOLOv8ObjectDetection(ObjectDetectionBaseOnnxRoboflowInferenceModel):
         Returns:
             Tuple[np.ndarray]: NumPy array representing the predictions, including boxes, confidence scores, and class confidence scores.
         """
+        # img_in = np.array(img_in, dtype=np.float32)
+        # img_in = onnxruntime.OrtValue.ortvalue_from_numpy(img_in, 'cuda', 0)
         predictions = self.onnx_session.run(None, {self.input_name: img_in})[0]
+        # if 'CUDAExecutionProvider' in self.onnx_session.get_providers():
+        #     logger.debug("CUDA is being used for inference.")
+        # else:
+        #     logger.debug("CUDA is not being used. The session has fallen back to another provider.")
         predictions = predictions.transpose(0, 2, 1)
         boxes = predictions[:, :, :4]
         class_confs = predictions[:, :, 4:]
