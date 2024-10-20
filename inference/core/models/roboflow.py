@@ -635,8 +635,6 @@ class OnnxRoboflowInferenceModel(RoboflowInferenceModel):
         )
         inference_results = []
         for batch_input in create_batches(sequence=image, batch_size=max_batch_size):
-            logger.debug(f"Calling infer method of class: {self.__class__.__name__}")
-            logger.debug(f"MRO (Method Resolution Order): {[cls.__name__ for cls in self.__class__.__mro__]}")
             batch_inference_results = super().infer(batch_input, **kwargs)
             batch_inference_results = super().infer(batch_input, **kwargs)
             inference_results.append(batch_inference_results)
@@ -713,13 +711,11 @@ class OnnxRoboflowInferenceModel(RoboflowInferenceModel):
                 logger.debug(f"Load weights is False, using default providers: {providers}")
             try:
                 session_options = onnxruntime.SessionOptions()
-                # session_options.enable_profiling = True
                 # TensorRT does better graph optimization for its EP than onnx
                 if has_trt(providers):
                     session_options.graph_optimization_level = (
                         onnxruntime.GraphOptimizationLevel.ORT_DISABLE_ALL
                     )
-                providers = ["CUDAExecutionProvider"]
                 self.onnx_session = onnxruntime.InferenceSession(
                     self.cache_file(self.weights_file),
                     providers=providers,
