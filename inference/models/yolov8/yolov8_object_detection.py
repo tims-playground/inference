@@ -40,8 +40,8 @@ class YOLOv8ObjectDetection(ObjectDetectionBaseOnnxRoboflowInferenceModel):
         Returns:
             Tuple[np.ndarray]: NumPy array representing the predictions, including boxes, confidence scores, and class confidence scores.
         """
-        # img_in = np.array(img_in, dtype=np.float32)
-        # img_in = onnxruntime.OrtValue.ortvalue_from_numpy(img_in, 'cuda', 0)
+        img_in = np.array(img_in, dtype=np.float32)
+        img_in = onnxruntime.OrtValue.ortvalue_from_numpy(img_in, 'cuda', 0)
         predictions = self.onnx_session.run(None, {self.input_name: img_in})[0]
         # if 'CUDAExecutionProvider' in self.onnx_session.get_providers():
         #     logger.debug("CUDA is being used for inference.")
